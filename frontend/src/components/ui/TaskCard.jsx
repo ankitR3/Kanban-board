@@ -1,4 +1,4 @@
-import { Flag, Tag, AlignLeft, Ban } from 'lucide-react';
+import { Flag, Tag, AlignLeft, Ban, Check, Pencil, Trash } from 'lucide-react';
 import { HoverCard, HoverCardTrigger, HoverCardContent } from './hover-card.jsx';
 import PillDropdown from './PillDropdown.jsx';
 import { Priority, Category } from '../../constants/enums.js';
@@ -44,8 +44,40 @@ export default function TaskCard({ task, onEdit, onDelete, onMarkDone, onUpdate 
         boxShadow: 'inset 0 2px 0 0 rgba(42,42,42,1), inset 0 -1px 0 0 rgba(0,0,0,0.3), 0 1px 0px rgba(0,0,0,0.1)'
       }}
     >
-      {/* Title */}
-      <p className="text-white text-sm font-medium mb-1.5">{task.title}</p>
+      {/* Title & Actions Row */}
+      <div className="flex items-start justify-between gap-2 mb-2">
+        <p className="text-white text-sm font-medium break-words flex-1 pr-1">{task.title}</p>
+        
+        {/* Actions Container */}
+        <div 
+          className="flex items-center gap-0.5 bg-[#2E2E2E]/60 border border-[#3E3E3E] rounded px-1 py-0.5 shrink-0" 
+          onClick={(e) => e.stopPropagation()}
+        >
+          {task.column !== 'DONE' && (
+            <button
+              onClick={() => onMarkDone?.(task)}
+              title="Mark as complete"
+              className="p-1 rounded text-gray-400 hover:text-green-400 hover:bg-[#3E3E3E] transition-all cursor-pointer"
+            >
+              <Check size={12} />
+            </button>
+          )}
+          <button
+            onClick={() => onEdit?.(task)}
+            title="Edit task name"
+            className="p-1 rounded text-gray-400 hover:text-blue-400 hover:bg-[#3E3E3E] transition-all cursor-pointer"
+          >
+            <Pencil size={12} />
+          </button>
+          <button
+            onClick={() => onDelete?.(task.id)}
+            title="Delete task"
+            className="p-1 rounded text-gray-400 hover:text-red-400 hover:bg-[#3E3E3E] transition-all cursor-pointer"
+          >
+            <Trash size={12} />
+          </button>
+        </div>
+      </div>
 
       {/* Description indicator — hover card shows preview, click opens full task */}
       {hasDescription && (
