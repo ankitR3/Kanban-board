@@ -107,22 +107,22 @@ export default function Navbar() {
           {/* Switcher Dropdown Panel */}
           {dropdownOpen && (
             <div 
-              className="absolute top-full left-0 mt-2 w-80 bg-[#1e1e1e] border border-[#333] rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] p-4 z-50 flex flex-col gap-3.5 text-sm"
+              className="absolute top-full left-0 mt-2 w-80 bg-[#161616] border border-[#2a2a2a] rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.7)] p-4 z-50 flex flex-col gap-3.5 text-sm"
               onClick={(e) => e.stopPropagation()}
             >
               {!isCreating ? (
                 <>
                   {/* Active Workspace Banner Card */}
-                  <div className="flex flex-col gap-3 p-3 bg-white/[0.02] rounded-xl border border-white/[0.06]">
+                  <div className="flex flex-col gap-3 p-3.5 bg-[#1c1c1c] rounded-xl border border-[#2a2a2a]">
                     <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${activeGradient} flex items-center justify-center text-white font-extrabold text-base shadow-md`}>
+                      <div className="w-11 h-11 rounded-lg bg-[#222] flex items-center justify-center text-amber-400 font-bold text-lg border border-[#333]">
                         {workspaceInitial}
                       </div>
                       <div className="flex flex-col min-w-0">
-                        <span className="font-semibold text-white text-xs line-clamp-1">
+                        <span className="font-semibold text-white text-sm line-clamp-1">
                           {activeWorkspace}
                         </span>
-                        <span className="text-[9px] text-[#A855F7] font-semibold tracking-wider uppercase">
+                        <span className="text-[10px] text-amber-400/80 font-semibold tracking-wider uppercase">
                           Free Forever · Upgrade
                         </span>
                       </div>
@@ -130,12 +130,12 @@ export default function Navbar() {
 
                     {/* Action buttons */}
                     <div className="flex gap-2 w-full">
-                      <button className="flex-1 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] text-gray-300 hover:text-white text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 border border-white/[0.05] transition-all duration-150 cursor-pointer">
-                        <Settings size={13} className="text-gray-400" />
+                      <button className="flex-1 py-2 bg-[#222] hover:bg-[#2a2a2a] text-gray-300 hover:text-white text-[13px] font-medium rounded-lg flex items-center justify-center gap-2 border border-[#333] transition-all duration-150 cursor-pointer">
+                        <Settings size={14} className="text-gray-400" />
                         Settings
                       </button>
-                      <button className="flex-1 py-1.5 bg-white/[0.04] hover:bg-white/[0.08] text-gray-300 hover:text-white text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 border border-white/[0.05] transition-all duration-150 cursor-pointer">
-                        <Users size={13} className="text-gray-400" />
+                      <button className="flex-1 py-2 bg-[#222] hover:bg-[#2a2a2a] text-gray-300 hover:text-white text-[13px] font-medium rounded-lg flex items-center justify-center gap-2 border border-[#333] transition-all duration-150 cursor-pointer">
+                        <Users size={14} className="text-gray-400" />
                         People
                       </button>
                     </div>
@@ -143,38 +143,38 @@ export default function Navbar() {
 
                   {/* Manage Menu Items */}
                   <div>
-                    <span className="text-[9px] font-bold text-gray-500 tracking-wider uppercase px-1">
+                    <span className="text-[10px] font-bold text-gray-500 tracking-wider uppercase px-1">
                       Manage
                     </span>
-                    <div className="flex flex-col gap-0.5 mt-1.5">
-                      <div className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg hover:bg-white/[0.04] text-xs text-gray-300 hover:text-white cursor-pointer transition-all duration-150">
-                        <LayoutGrid size={13} className="text-gray-400" />
+                    <div className="flex flex-col gap-0.5 mt-2">
+                      <div className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#222] text-[13px] text-gray-300 hover:text-white cursor-pointer transition-all duration-150">
+                        <LayoutGrid size={15} className="text-gray-500" />
                         <span>Apps</span>
                       </div>
-                      <div className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg hover:bg-white/[0.04] text-xs text-gray-300 hover:text-white cursor-pointer transition-all duration-150">
-                        <FolderArchive size={13} className="text-gray-400" />
+                      <div className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#222] text-[13px] text-gray-300 hover:text-white cursor-pointer transition-all duration-150">
+                        <FolderArchive size={15} className="text-gray-500" />
                         <span>Templates</span>
                       </div>
-                      <div className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg hover:bg-white/[0.04] text-xs text-gray-300 hover:text-white cursor-pointer transition-all duration-150">
-                        <ClipboardList size={13} className="text-gray-400" />
+                      <div className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#222] text-[13px] text-gray-300 hover:text-white cursor-pointer transition-all duration-150">
+                        <ClipboardList size={15} className="text-gray-500" />
                         <span>Custom Fields</span>
                       </div>
-                      <div className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg hover:bg-white/[0.04] text-xs text-gray-300 hover:text-white cursor-pointer transition-all duration-150">
-                        <Bolt size={13} className="text-gray-400" />
+                      <div className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#222] text-[13px] text-gray-300 hover:text-white cursor-pointer transition-all duration-150">
+                        <Bolt size={15} className="text-gray-500" />
                         <span>Automations</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Divider */}
-                  <div className="border-t border-white/[0.06] my-0.5" />
+                  <div className="border-t border-[#2a2a2a] my-0.5" />
 
                   {/* Workspaces list */}
                   <div>
-                    <span className="text-[9px] font-bold text-gray-500 tracking-wider uppercase px-1">
+                    <span className="text-[10px] font-bold text-gray-500 tracking-wider uppercase px-1">
                       Workspaces
                     </span>
-                    <div className="flex flex-col gap-0.5 mt-1.5 max-h-28 overflow-y-auto pr-1 kanban-scroll">
+                    <div className="flex flex-col gap-0.5 mt-2 max-h-32 overflow-y-auto pr-1 kanban-scroll">
                       {workspaces.map((ws) => {
                         const isSelected = ws === activeWorkspace;
                         const wsGradient = getWorkspaceGradient(ws);
@@ -185,16 +185,16 @@ export default function Navbar() {
                               setActiveWorkspace(ws);
                               setDropdownOpen(false);
                             }}
-                            className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs cursor-pointer transition-all duration-150 border border-transparent
-                              ${isSelected ? 'bg-gradient-to-r from-violet-600/15 to-indigo-600/5 border-violet-500/20 text-white font-medium shadow-[0_2px_10px_rgba(139,92,246,0.08)]' : 'text-gray-400 hover:bg-white/[0.04] hover:text-white'}`}
+                            className={`flex items-center justify-between px-3 py-2 rounded-lg text-[13px] cursor-pointer transition-all duration-150 border border-transparent
+                              ${isSelected ? 'bg-[#222] border-[#333] text-white font-medium' : 'text-gray-400 hover:bg-[#1e1e1e] hover:text-white'}`}
                           >
-                            <div className="flex items-center gap-2.5 min-w-0">
-                              <div className={`w-5 h-5 rounded bg-gradient-to-br ${wsGradient} flex items-center justify-center text-white text-[9px] font-bold shrink-0 shadow-sm`}>
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className={`w-6 h-6 rounded bg-gradient-to-br ${wsGradient} flex items-center justify-center text-white text-[10px] font-bold shrink-0`}>
                                 {ws.charAt(0).toUpperCase()}
                               </div>
                               <span className="truncate">{ws}</span>
                             </div>
-                            {isSelected && <Check size={13} className="text-emerald-400 shrink-0" />}
+                            {isSelected && <Check size={15} className="text-emerald-400 shrink-0" />}
                           </div>
                         );
                       })}
@@ -202,14 +202,14 @@ export default function Navbar() {
                   </div>
 
                   {/* Divider */}
-                  <div className="border-t border-white/[0.06]" />
+                  <div className="border-t border-[#2a2a2a]" />
 
                   {/* Footer add button */}
                   <button
                     onClick={() => setIsCreating(true)}
-                    className="flex items-center justify-center gap-2 py-2 text-xs font-bold text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 rounded-xl shadow-md shadow-violet-600/15 transition-all duration-200 cursor-pointer w-full border-0"
+                    className="flex items-center justify-center gap-2 py-2.5 text-[13px] font-semibold text-white bg-[#222] hover:bg-[#2a2a2a] rounded-lg border border-[#333] transition-all duration-200 cursor-pointer w-full"
                   >
-                    <Plus size={14} />
+                    <Plus size={15} />
                     Create Workspace
                   </button>
                 </>
@@ -217,7 +217,7 @@ export default function Navbar() {
                 /* Inline Workspace Creation Form */
                 <form onSubmit={handleCreateWorkspace} className="flex flex-col gap-3 py-1">
                   <div>
-                    <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">
+                    <h4 className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2">
                       Create New Workspace
                     </h4>
                     <input
@@ -226,7 +226,7 @@ export default function Navbar() {
                       placeholder="Workspace Name"
                       value={newWorkspaceName}
                       onChange={(e) => setNewWorkspaceName(e.target.value)}
-                      className="w-full bg-[#161824] border border-[#272B3C] focus:border-violet-500 focus:ring-1 focus:ring-violet-500/20 rounded-lg p-2.5 text-xs text-white placeholder-gray-500 focus:outline-none transition-all duration-150"
+                      className="w-full bg-[#1a1a1a] border border-[#333] focus:border-amber-500/60 focus:ring-1 focus:ring-amber-500/20 rounded-lg p-2.5 text-sm text-white placeholder-gray-500 focus:outline-none transition-all duration-150"
                     />
                   </div>
 
@@ -234,15 +234,15 @@ export default function Navbar() {
                     <button
                       type="button"
                       onClick={() => setIsCreating(false)}
-                      className="px-3.5 py-1.5 bg-neutral-800 hover:bg-neutral-700/80 text-xs text-gray-300 hover:text-white rounded-lg transition-all cursor-pointer font-medium border-0"
+                      className="px-3.5 py-1.5 bg-[#222] hover:bg-[#2a2a2a] text-[13px] text-gray-300 hover:text-white rounded-lg transition-all cursor-pointer font-medium border border-[#333]"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={!newWorkspaceName.trim()}
-                      className={`px-3.5 py-1.5 text-xs text-white rounded-lg font-bold transition-all border-0 cursor-pointer
-                        ${newWorkspaceName.trim() ? 'bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 shadow-md shadow-violet-600/15' : 'bg-neutral-800 text-neutral-500 cursor-not-allowed'}`}
+                      className={`px-3.5 py-1.5 text-[13px] text-white rounded-lg font-semibold transition-all border cursor-pointer
+                        ${newWorkspaceName.trim() ? 'bg-white/10 hover:bg-white/15 border-[#444]' : 'bg-[#1a1a1a] text-neutral-500 cursor-not-allowed border-[#2a2a2a]'}`}
                     >
                       Create
                     </button>
