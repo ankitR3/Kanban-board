@@ -1,12 +1,9 @@
 import { Search, LayoutDashboard } from 'lucide-react';
 import { useHomeStore } from '../../store/useHomeStore.js';
 import { SidebarEnum } from '../../constants/enums.js';
-import useSocket from '../../hooks/useSocket.js';
-import ProgressChart from '../ui/ProgressChart.jsx';
 
 export default function MiddleContentbar() {
   const { activeTab } = useHomeStore();
-  const { tasks } = useSocket();
 
   const menuItems = [
     { icon: LayoutDashboard, label: 'Kanban', active: true },
@@ -50,14 +47,6 @@ export default function MiddleContentbar() {
           );
         })}
       </nav>
-
-      {/* Divider */}
-      <div className="border-t border-[#1f1f1f] my-4 shrink-0" />
-
-      {/* Progress Chart — updates in real-time as tasks change */}
-      <div className="px-1 flex-1 min-h-0">
-        <ProgressChart tasks={tasks} />
-      </div>
     </aside>
   );
 }

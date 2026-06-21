@@ -18,7 +18,7 @@ const tooltipStyle = {
     cursor:       { fill: 'rgba(255,255,255,0.04)' },
 };
 
-export default function ProgressChart({ tasks }) {
+export default function ProgressChart({ tasks, embedded }) {
     const total = tasks.length;
 
     /* Per-column counts */
@@ -41,7 +41,7 @@ export default function ProgressChart({ tasks }) {
     return (
         <div
             data-testid="progress-chart"
-            className="bg-[#141414] border border-[#1f1f1f] rounded-xl p-5 flex flex-col gap-6"
+            className={embedded ? "flex flex-col gap-5 px-1 py-2" : "bg-[#141414] border border-[#1f1f1f] rounded-xl p-5 flex flex-col gap-6"}
         >
             {/* Header */}
             <div className="flex items-center justify-between">

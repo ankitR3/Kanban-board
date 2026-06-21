@@ -15,7 +15,6 @@ export default function LeftSidebar() {
 
     const menuItems = [
         { value: SidebarEnum.HOME,     icon: Home,         label: 'Home',     disabled: false },
-        { value: SidebarEnum.PROJECTS, icon: FolderKanban, label: 'Projects', disabled: true },
     ];
 
     const bottomItems = [

@@ -163,7 +163,7 @@ export default function TaskModal({ isOpen, onClose, onSave, initialTask }) {
 
           {/* Property pills */}
           <div className="flex flex-wrap items-center gap-2 mb-6">
-            <PillDropdown label={columnLabels[column]} filled>
+            <PillDropdown label={columnLabels[column]} filled upward={true}>
               {(close) => (
                 <>
                   {Object.entries(columnLabels).map(([val, lbl]) => (
@@ -175,7 +175,7 @@ export default function TaskModal({ isOpen, onClose, onSave, initialTask }) {
               )}
             </PillDropdown>
 
-            <PillDropdown icon={Flag} iconColor={selectedPriority?.color} label={selectedPriority ? `${selectedPriority.label} priority` : 'Priority'}>
+            <PillDropdown icon={Flag} iconColor={selectedPriority?.color} label={selectedPriority ? `${selectedPriority.label} priority` : 'Priority'} upward={true}>
               {(close) => (
                 <>
                   <p className="text-gray-500 text-[12px] px-3 pt-1 pb-2">Priority</p>
@@ -193,7 +193,7 @@ export default function TaskModal({ isOpen, onClose, onSave, initialTask }) {
               )}
             </PillDropdown>
 
-            <PillDropdown icon={Tag} label={selectedCategory ? selectedCategory.label : 'Category'}>
+            <PillDropdown icon={Tag} label={selectedCategory ? selectedCategory.label : 'Category'} upward={true}>
               {(close) => (
                 <>
                   <p className="text-gray-500 text-[12px] px-3 pt-1 pb-2">Category</p>

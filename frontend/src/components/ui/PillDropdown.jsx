@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export default function PillDropdown({ icon: Icon, iconColor, label, children, filled }) {
+export default function PillDropdown({ icon: Icon, iconColor, label, children, filled, upward }) {
   const [open, setOpen] = useState(false);
   return (
     <div className="relative">
@@ -16,7 +16,8 @@ export default function PillDropdown({ icon: Icon, iconColor, label, children, f
         <>
           <div className="fixed inset-0 z-10" onClick={(e) => { e.stopPropagation(); setOpen(false); }} />
           <div
-            className="absolute top-full left-0 mt-1 bg-[#262626] border border-[#3a3a3a] rounded-lg shadow-xl z-20 min-w-42.5 py-1"
+            className={`absolute left-0 bg-[#262626] border border-[#3a3a3a] rounded-lg shadow-xl z-20 min-w-42.5 py-1
+              ${upward ? 'bottom-full mb-1' : 'top-full mt-1'}`}
             onClick={(e) => e.stopPropagation()}
           >
             {children(() => setOpen(false))}

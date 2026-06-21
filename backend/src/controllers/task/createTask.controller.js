@@ -7,9 +7,11 @@ export default async function createTaskController(data) {
             throw new Error("title is required");
         }
 
+        const targetColumn = data.column || Column.TODO;
+
         const count = await prisma.task.count({
             where: {
-                column: Column.TODO
+                column: targetColumn
             }
         });
 
@@ -17,11 +19,11 @@ export default async function createTaskController(data) {
             data: {
                 title: data.title.trim(),
                 description: data.description || "",
-                column: Column.TODO,
+                column: targetColumn,
                 priority: data.priority || Priority.MEDIUM,
                 category: data.category || Category.GENERAL,
                 orderIndex: count,
-                attachments: [],
+                attachments: data.attachments || [],
             },
         });
 

@@ -1,20 +1,20 @@
 import { Columns3, List, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 import { DndContext, closestCorners, PointerSensor, useSensor, useSensors, DragOverlay } from '@dnd-kit/core';
-import { arrayMove } from '@dnd-kit/sortable';
 import useSocket from '../../hooks/useSocket.js';
 import TaskCard from '../ui/TaskCard.jsx';
 import TaskModal from '../ui/TaskModal.jsx';
 import KanbanColumn from '../ui/KanbanColumn.jsx';
 import ListView from '../ui/ListView.jsx';
 import { Column } from '../../constants/enums.js';
+import ProgressChart from '../ui/ProgressChart.jsx';
 
 export default function RightMainContent() {
     const [activeView, setActiveView] = useState('board');
     const [modalOpen, setModalOpen] = useState(false);
     const [editingTask, setEditingTask] = useState(null);
     const [activeTask, setActiveTask] = useState(null);
-    const { tasks, setTasks, loading, createTask, updateTask, moveTask, deleteTask, reorderTask } = useSocket();
+    const { tasks, loading, createTask, updateTask, moveTask, deleteTask, reorderTask } = useSocket();
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -141,22 +141,11 @@ export default function RightMainContent() {
         // Same-column reorder
         if (active.id === over.id) return;
 
-        // Use the ORIGINAL (unfiltered) column task array to get correct indices.
-        // Previously we used the filtered array (dragged item removed), which caused
-        // the newIndex to be off-by-one when dragging forward → server splice was a no-op.
         const allColumnTasks = getColumnTasks(targetColumn);
         const oldIndex = allColumnTasks.findIndex((t) => t.id === active.id);
         const newIndex = allColumnTasks.findIndex((t) => t.id === over.id);
 
         if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) return;
-
-        // Optimistic update: rearrange local state immediately so the card
-        // stays in its new position without snapping back during the server round-trip.
-        const reorderedColumn = arrayMove(allColumnTasks, oldIndex, newIndex);
-        setTasks((prev) => [
-            ...prev.filter((t) => t.column !== targetColumn),
-            ...reorderedColumn,
-        ]);
 
         reorderTask(active.id, newIndex, targetColumn);
     };
@@ -174,8 +163,7 @@ export default function RightMainContent() {
 
     return (
         <main
-            className="flex-1 bg-[#0E0E0E] rounded-r-md border-r border-t border-b border-[#1F1F1F] flex flex-col overflow-hidden"
-            style={{ height: '100vh' }}
+            className="flex-1 bg-[#0E0E0E] rounded-r-md border-r border-t border-b border-[#1F1F1F] flex flex-col overflow-hidden h-full min-w-0"
         >
             {/* ── toolbar ── */}
             <div className="flex items-center justify-between px-6 py-3 border-b border-[#1F1F1F] shrink-0">
@@ -243,6 +231,20 @@ export default function RightMainContent() {
                                 onAddTask={openCreateModal}
                             />
                         ))}
+
+                        {/* Task Progress Stats Column */}
+                        <div className="w-70 shrink-0 bg-[#141414] rounded-lg p-3 flex flex-col max-h-full">
+                            {/* Column Header */}
+                            <div className="flex items-center gap-2 mb-4 w-fit pl-2 pr-2.5 py-1 rounded-md shrink-0 bg-indigo-500/10">
+                                <span className="w-2 h-2 rounded-full bg-indigo-500 shrink-0" />
+                                <span className="text-sm font-medium text-indigo-300 whitespace-nowrap">Task Progress</span>
+                            </div>
+
+                            {/* Chart Content — Scrollable internally */}
+                            <div className="kanban-scroll overflow-y-auto flex-1 min-h-0 pr-1">
+                                <ProgressChart tasks={tasks} embedded={true} />
+                            </div>
+                        </div>
                     </div>
 
                     <DragOverlay>
