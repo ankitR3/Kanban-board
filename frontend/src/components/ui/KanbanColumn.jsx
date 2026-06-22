@@ -9,15 +9,14 @@ export default function KanbanColumn({ column, tasks, onEdit, onDelete, onMarkDo
 
     return (
         <div className="w-70 shrink-0 bg-[#141414] rounded-lg p-3 flex flex-col max-h-full">
-            {/* Header — stays fixed, never scrolls */}
-            <div className={`flex items-center gap-2 mb-3 w-fit pl-2 pr-2.5 py-1 rounded-md shrink-0 ${column.bgColor}`}>
+            {/* Header */}
+            <div className={`flex items-center gap-2 mb-2 w-fit pl-2 pr-2.5 py-1 rounded-md shrink-0 ${column.bgColor}`}>
                 <span className={`w-2 h-2 rounded-full shrink-0 ${column.dotColor}`} />
                 <span className={`text-sm font-medium whitespace-nowrap ${column.textColor}`}>{column.label}</span>
                 <span className="text-gray-600 text-xs">{tasks.length}</span>
             </div>
 
-            {/* Card list — scrolls internally when it overflows */}
-            {/* ref is placed here so the whole scrollable area is the drop zone */}
+            {/* Card list + Add Task — scrolls together */}
             <div
                 ref={setNodeRef}
                 className={`kanban-scroll overflow-y-auto flex-1 min-h-0 pr-1 rounded-md transition-colors ${
@@ -29,8 +28,7 @@ export default function KanbanColumn({ column, tasks, onEdit, onDelete, onMarkDo
                     items={tasks.map((t) => t.id)}
                     strategy={verticalListSortingStrategy}
                 >
-                    {/* min-h ensures empty columns remain droppable */}
-                    <div className="min-h-[60px] pb-1">
+                    <div>
                         {tasks.map((task) => (
                             <SortableTaskCard
                                 key={task.id}
@@ -43,15 +41,15 @@ export default function KanbanColumn({ column, tasks, onEdit, onDelete, onMarkDo
                         ))}
                     </div>
                 </SortableContext>
-            </div>
 
-            {/* Add Task — stays fixed at bottom, never scrolls */}
-            <button
-                onClick={onAddTask}
-                className="flex items-center gap-1.5 text-gray-400 hover:bg-[#282828] text-md px-1 py-1.5 transition-all w-full hover:cursor-pointer rounded-md shrink-0"
-            >
-                <Plus size={17} /> Add Task
-            </button>
+                {/* Add Task — flows below cards, scrolls with them */}
+                <button
+                    onClick={onAddTask}
+                    className="flex items-center gap-1.5 text-gray-400 hover:bg-[#282828] text-md px-1 py-1.5 transition-all w-full hover:cursor-pointer rounded-md"
+                >
+                    <Plus size={17} /> Add Task
+                </button>
+            </div>
         </div>
     );
 }

@@ -1,4 +1,4 @@
-import { Columns3, List, ChevronDown } from 'lucide-react';
+import { Columns3, List, ChevronDown, FolderPlus } from 'lucide-react';
 import { useState } from 'react';
 import { DndContext, closestCorners, PointerSensor, useSensor, useSensors, DragOverlay } from '@dnd-kit/core';
 import useSocket from '../../hooks/useSocket.js';
@@ -6,10 +6,12 @@ import TaskCard from '../ui/TaskCard.jsx';
 import TaskModal from '../ui/TaskModal.jsx';
 import KanbanColumn from '../ui/KanbanColumn.jsx';
 import ListView from '../ui/ListView.jsx';
-import { Column } from '../../constants/enums.js';
+import { Column, SidebarEnum } from '../../constants/enums.js';
 import ProgressChart from '../ui/ProgressChart.jsx';
+import { useHomeStore } from '../../store/useHomeStore.js';
 
 export default function RightMainContent() {
+    const { activeTab, activeWorkspace } = useHomeStore();
     const [activeView, setActiveView] = useState('board');
     const [modalOpen, setModalOpen] = useState(false);
     const [editingTask, setEditingTask] = useState(null);
@@ -150,14 +152,54 @@ export default function RightMainContent() {
         reorderTask(active.id, newIndex, targetColumn);
     };
 
+    if (activeTab === SidebarEnum.PROGRESS) {
+        return (
+            <main className="flex-1 bg-[#0E0E0E] rounded-r-md border-r border-t border-b border-[#1F1F1F] flex flex-col overflow-hidden h-full min-w-0">
+                {/* ── toolbar ── */}
+                <div className="flex items-center justify-between px-6 py-3 border-b border-[#1F1F1F] shrink-0">
+                    <div className="flex items-center gap-4">
+                        <span className="text-white font-medium text-sm">Progress</span>
+                    </div>
+                </div>
+
+                {/* ── content ── */}
+                <div className="flex-1 p-6 overflow-y-auto kanban-scroll flex flex-col items-center justify-start">
+                    <div className="w-full max-w-2xl">
+                        <ProgressChart tasks={tasks} embedded={false} />
+                    </div>
+                </div>
+            </main>
+        );
+    }
+
+    // ── Loading (socket connecting) ───────────────────────────────────────
     if (loading) {
         return (
         <main className="flex-1 h-full bg-[#0E0E0E] rounded-r-md border-r border-t border-b border-[#1F1F1F] flex items-center justify-center">
             <div className="flex items-center gap-2 text-gray-400 text-sm">
             <div className="w-4 h-4 border-2 border-gray-600 border-t-indigo-500 rounded-full animate-spin" />
-            Loading tasks...
+            Loading...
             </div>
         </main>
+        );
+    }
+
+    // ── No workspace selected (shown only after socket has loaded) ────────
+    if (!activeWorkspace) {
+        return (
+            <main className="flex-1 h-full bg-[#0E0E0E] rounded-r-md border-r border-t border-b border-[#1F1F1F] flex items-center justify-center">
+                <div className="flex flex-col items-center gap-4 text-center px-6">
+                    <div className="w-16 h-16 rounded-2xl bg-[#1a1a1a] border border-[#2a2a2a] flex items-center justify-center">
+                        <FolderPlus size={28} className="text-amber-400" />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        <h3 className="text-white font-semibold text-base">No workspace selected</h3>
+                        <p className="text-gray-500 text-sm max-w-xs">
+                            Create a workspace from the top-left menu to start organizing your kanban board.
+                        </p>
+                    </div>
+                </div>
+            </main>
         );
     }
 
@@ -231,20 +273,6 @@ export default function RightMainContent() {
                                 onAddTask={openCreateModal}
                             />
                         ))}
-
-                        {/* Task Progress Stats Column */}
-                        <div className="w-70 shrink-0 bg-[#141414] rounded-lg p-3 flex flex-col max-h-full">
-                            {/* Column Header */}
-                            <div className="flex items-center gap-2 mb-4 w-fit pl-2 pr-2.5 py-1 rounded-md shrink-0 bg-indigo-500/10">
-                                <span className="w-2 h-2 rounded-full bg-indigo-500 shrink-0" />
-                                <span className="text-sm font-medium text-indigo-300 whitespace-nowrap">Task Progress</span>
-                            </div>
-
-                            {/* Chart Content — Scrollable internally */}
-                            <div className="kanban-scroll overflow-y-auto flex-1 min-h-0 pr-1">
-                                <ProgressChart tasks={tasks} embedded={true} />
-                            </div>
-                        </div>
                     </div>
 
                     <DragOverlay>

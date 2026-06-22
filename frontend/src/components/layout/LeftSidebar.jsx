@@ -1,4 +1,4 @@
-import { Home, FolderKanban, UserPlus, ArrowUpCircle } from 'lucide-react';
+import { Home, FolderKanban, UserPlus, ArrowUpCircle, TrendingUp } from 'lucide-react';
 import { useHomeStore } from '../../store/useHomeStore';
 import { SidebarEnum } from '../../constants/enums';
 
@@ -14,7 +14,12 @@ export default function LeftSidebar() {
     }
 
     const menuItems = [
-        { value: SidebarEnum.HOME,     icon: Home,         label: 'Home',     disabled: false },
+        {
+            value: SidebarEnum.HOME,
+            icon: Home,
+            label: 'Home',
+            disabled: false
+        }
     ];
 
     const bottomItems = [
@@ -28,7 +33,9 @@ export default function LeftSidebar() {
             <nav className="flex flex-col items-center gap-1 flex-1 w-full px-1 pt-2">
                 {menuItems.map((item) => {
                     const Icon = item.icon;
-                    const isActive = activeTab === item.value;
+                    const isActive = item.value === SidebarEnum.HOME 
+                        ? (activeTab === SidebarEnum.HOME || activeTab === SidebarEnum.PROGRESS)
+                        : activeTab === item.value;
                     
                     if (item.disabled) {
                         return (

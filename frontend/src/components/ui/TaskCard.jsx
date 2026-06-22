@@ -1,6 +1,8 @@
-import { Flag, Tag, AlignLeft, Ban, Check, Pencil, Trash } from 'lucide-react';
+import { Flag, Tag, AlignLeft, Ban, Check, Pencil, Trash, Paperclip, FileText } from 'lucide-react';
+import { useState } from 'react';
 import { HoverCard, HoverCardTrigger, HoverCardContent } from './hover-card.jsx';
 import PillDropdown from './PillDropdown.jsx';
+import AttachmentViewer from './AttachmentViewer.jsx';
 import { Priority, Category } from '../../constants/enums.js';
 
 const priorityOptions = [
@@ -29,21 +31,58 @@ const priorityLabel = {
 };
 
 export default function TaskCard({ task, onEdit, onDelete, onMarkDone, onUpdate }) {
-  const hasPriority = Boolean(task.priority);
-  const hasCategory = Boolean(task.category);
+  const hasPriority    = Boolean(task.priority);
+  const hasCategory    = Boolean(task.category);
   const hasDescription = Boolean(task.description?.trim());
+
+  const attachments     = task.attachments || [];
+  const imageAttachments = attachments.filter((a) => a.type?.startsWith('image/'));
+  const fileAttachments  = attachments.filter((a) => !a.type?.startsWith('image/'));
+  const hasAttachments  = attachments.length > 0;
 
   const setPriority = (value) => onUpdate?.(task.id, { priority: value });
   const setCategory = (value) => onUpdate?.(task.id, { category: value });
 
+  const [viewerIndex, setViewerIndex] = useState(null);
+
+  const openViewer = (e, index) => {
+    e.stopPropagation();
+    setViewerIndex(index);
+  };
+
   return (
     <div
       onClick={() => onEdit(task)}
-      className="bg-[#212121] rounded-md p-3 mb-2.5 cursor-pointer transition-all"
+      className="bg-[#212121] rounded-md mb-2.5 cursor-pointer transition-all overflow-hidden"
       style={{
         boxShadow: 'inset 0 2px 0 0 rgba(42,42,42,1), inset 0 -1px 0 0 rgba(0,0,0,0.3), 0 1px 0px rgba(0,0,0,0.1)'
       }}
     >
+      {/* ── Image attachment preview (top of card, like ClickUp) ── */}
+      {imageAttachments.length > 0 && (
+        <div
+          className={`w-full overflow-hidden ${
+            imageAttachments.length === 1 ? '' : 'grid grid-cols-2 gap-0.5'
+          }`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {imageAttachments.slice(0, 4).map((img) => {
+            const globalIdx = attachments.indexOf(img);
+            return (
+              <img
+                key={img.id}
+                src={img.url}
+                alt={img.name}
+                onClick={(e) => openViewer(e, globalIdx)}
+                className="w-full object-cover max-h-48 cursor-zoom-in hover:brightness-90 transition-all"
+                style={imageAttachments.length > 1 ? { height: '80px' } : {}}
+              />
+            );
+          })}
+        </div>
+      )}
+
+      <div className="p-3">
       {/* Title & Actions Row */}
       <div className="flex items-start justify-between gap-2 mb-2">
         <p className="text-white text-sm font-medium break-words flex-1 pr-1">{task.title}</p>
@@ -102,8 +141,8 @@ export default function TaskCard({ task, onEdit, onDelete, onMarkDone, onUpdate 
       )}
       {!hasDescription && <div className="mb-3" />}
 
-      {/* Icon row — priority + category, both click-to-edit via PillDropdown */}
-      <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+      {/* Icon row — priority + category + file attachments */}
+      <div className="flex items-center gap-2 flex-wrap" onClick={(e) => e.stopPropagation()}>
         {/* Priority dropdown */}
         <PillDropdown
           icon={Flag}
@@ -162,7 +201,41 @@ export default function TaskCard({ task, onEdit, onDelete, onMarkDone, onUpdate 
             </>
           )}
         </PillDropdown>
+
+        {/* Non-image file attachments — show as clickable pills */}
+        {fileAttachments.map((file) => {
+          const globalIdx = attachments.indexOf(file);
+          return (
+            <button
+              key={file.id}
+              onClick={(e) => openViewer(e, globalIdx)}
+              title={file.name}
+              className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#2a2a2a] border border-[#383838] text-gray-400 hover:text-white hover:border-[#555] transition-all text-[11px] max-w-[120px] cursor-pointer"
+            >
+              <FileText size={11} className="shrink-0 text-red-400" />
+              <span className="truncate">{file.name}</span>
+            </button>
+          );
+        })}
+
+        {/* Attachment count badge if images present */}
+        {imageAttachments.length > 0 && (
+          <span className="flex items-center gap-1 text-gray-500 text-[11px]">
+            <Paperclip size={11} />
+            {attachments.length}
+          </span>
+        )}
       </div>
+      </div>
+
+      {/* Attachment lightbox viewer */}
+      {viewerIndex !== null && (
+        <AttachmentViewer
+          attachments={attachments}
+          startIndex={viewerIndex}
+          onClose={() => setViewerIndex(null)}
+        />
+      )}
     </div>
   );
 }

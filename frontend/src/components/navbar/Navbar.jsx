@@ -1,39 +1,22 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { 
   Search, 
   ChevronDown, 
-  Calendar, 
-  Sparkles, 
-  Settings, 
-  Users, 
-  LayoutGrid, 
-  FolderArchive, 
-  ClipboardList, 
-  Bolt, 
   Check, 
   Plus,
-  Kanban,
-  Bell,
-  HelpCircle,
-  CreditCard,
-  Laptop,
-  LogOut,
-  User,
-  Folder
+  Folder,
+  Trash2
 } from 'lucide-react';
 import { useHomeStore } from '../../store/useHomeStore.js';
+import useSocket from '../../hooks/useSocket.js';
 
 
 export default function Navbar() {
-  const { 
-    workspaces, 
-    activeWorkspace, 
-    addWorkspace, 
-    setActiveWorkspace 
-  } = useHomeStore();
+  const { activeWorkspace, setActiveWorkspace } = useHomeStore();
+  const { workspaces, createWorkspace, deleteWorkspace } = useSocket();
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+
   const [isCreating, setIsCreating] = useState(false);
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
   const [searchFocused, setSearchFocused] = useState(false);
@@ -47,16 +30,13 @@ export default function Navbar() {
   const handleCreateWorkspace = (e) => {
     e.preventDefault();
     if (!newWorkspaceName.trim()) return;
-    addWorkspace(newWorkspaceName.trim());
+    createWorkspace(newWorkspaceName.trim());
     setNewWorkspaceName('');
     setIsCreating(false);
     setDropdownOpen(false);
   };
 
-  // Get first letter of workspace name for avatar badge
-  const workspaceInitial = activeWorkspace ? activeWorkspace.charAt(0).toUpperCase() : 'A';
-
-  // Generate consistent gradients for workspaces based on name length/hash
+  // Generate consistent gradients for workspaces based on name
   const getWorkspaceGradient = (name) => {
     if (!name) return 'from-violet-500 to-indigo-500';
     const gradients = [
@@ -74,29 +54,28 @@ export default function Navbar() {
     return gradients[sum % gradients.length];
   };
 
-  const activeGradient = getWorkspaceGradient(activeWorkspace);
+  const workspaceName = activeWorkspace?.name ?? null;
+  const workspaceInitial = workspaceName ? workspaceName.charAt(0).toUpperCase() : '?';
+  const activeGradient = getWorkspaceGradient(workspaceName);
 
   return (
     <header className="h-11 px-3 pt-1 flex items-center justify-between relative select-none z-50 w-full">
       
       {/* ── LEFT SECTION: WORKSPACE SELECTOR ── */}
       <div className="flex items-center gap-1 shrink-0">
-        {/* Workspace Switcher Trigger */}
         <div className="relative">
           <div 
             onClick={toggleDropdown}
             className="flex items-center gap-2 hover:bg-white/[0.06] px-2 py-1 rounded-md transition-all duration-200 cursor-pointer text-gray-200"
           >
-            {/* Folder Icon */}
             <Folder size={16} className="text-amber-400 fill-amber-400" />
-            {/* Workspace Title */}
             <span className="text-[13px] font-medium text-gray-200 line-clamp-1 max-w-[160px]">
-              {activeWorkspace || 'Winterfell'}
+              {workspaceName ?? 'No Workspace'}
             </span>
             <ChevronDown size={14} className={`text-gray-500 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
           </div>
 
-          {/* Transparent Backdrop to close dropdown on click outside */}
+          {/* Backdrop */}
           {dropdownOpen && (
             <div 
               className="fixed inset-0 z-40 cursor-default" 
@@ -104,7 +83,7 @@ export default function Navbar() {
             />
           )}
 
-          {/* Switcher Dropdown Panel */}
+          {/* Dropdown Panel */}
           {dropdownOpen && (
             <div 
               className="absolute top-full left-0 mt-2 w-80 bg-[#161616] border border-[#2a2a2a] rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.7)] p-4 z-50 flex flex-col gap-3.5 text-sm"
@@ -112,62 +91,6 @@ export default function Navbar() {
             >
               {!isCreating ? (
                 <>
-                  {/* Active Workspace Banner Card */}
-                  <div className="flex flex-col gap-3 p-3.5 bg-[#1c1c1c] rounded-xl border border-[#2a2a2a]">
-                    <div className="flex items-center gap-3">
-                      <div className="w-11 h-11 rounded-lg bg-[#222] flex items-center justify-center text-amber-400 font-bold text-lg border border-[#333]">
-                        {workspaceInitial}
-                      </div>
-                      <div className="flex flex-col min-w-0">
-                        <span className="font-semibold text-white text-sm line-clamp-1">
-                          {activeWorkspace}
-                        </span>
-                        <span className="text-[10px] text-amber-400/80 font-semibold tracking-wider uppercase">
-                          Free Forever · Upgrade
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Action buttons */}
-                    <div className="flex gap-2 w-full">
-                      <button className="flex-1 py-2 bg-[#222] hover:bg-[#2a2a2a] text-gray-300 hover:text-white text-[13px] font-medium rounded-lg flex items-center justify-center gap-2 border border-[#333] transition-all duration-150 cursor-pointer">
-                        <Settings size={14} className="text-gray-400" />
-                        Settings
-                      </button>
-                      <button className="flex-1 py-2 bg-[#222] hover:bg-[#2a2a2a] text-gray-300 hover:text-white text-[13px] font-medium rounded-lg flex items-center justify-center gap-2 border border-[#333] transition-all duration-150 cursor-pointer">
-                        <Users size={14} className="text-gray-400" />
-                        People
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Manage Menu Items */}
-                  <div>
-                    <span className="text-[10px] font-bold text-gray-500 tracking-wider uppercase px-1">
-                      Manage
-                    </span>
-                    <div className="flex flex-col gap-0.5 mt-2">
-                      <div className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#222] text-[13px] text-gray-300 hover:text-white cursor-pointer transition-all duration-150">
-                        <LayoutGrid size={15} className="text-gray-500" />
-                        <span>Apps</span>
-                      </div>
-                      <div className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#222] text-[13px] text-gray-300 hover:text-white cursor-pointer transition-all duration-150">
-                        <FolderArchive size={15} className="text-gray-500" />
-                        <span>Templates</span>
-                      </div>
-                      <div className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#222] text-[13px] text-gray-300 hover:text-white cursor-pointer transition-all duration-150">
-                        <ClipboardList size={15} className="text-gray-500" />
-                        <span>Custom Fields</span>
-                      </div>
-                      <div className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#222] text-[13px] text-gray-300 hover:text-white cursor-pointer transition-all duration-150">
-                        <Bolt size={15} className="text-gray-500" />
-                        <span>Automations</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Divider */}
-                  <div className="border-t border-[#2a2a2a] my-0.5" />
 
                   {/* Workspaces list */}
                   <div>
@@ -175,36 +98,52 @@ export default function Navbar() {
                       Workspaces
                     </span>
                     <div className="flex flex-col gap-0.5 mt-2 max-h-32 overflow-y-auto pr-1 kanban-scroll">
-                      {workspaces.map((ws) => {
-                        const isSelected = ws === activeWorkspace;
-                        const wsGradient = getWorkspaceGradient(ws);
-                        return (
-                          <div
-                            key={ws}
-                            onClick={() => {
-                              setActiveWorkspace(ws);
-                              setDropdownOpen(false);
-                            }}
-                            className={`flex items-center justify-between px-3 py-2 rounded-lg text-[13px] cursor-pointer transition-all duration-150 border border-transparent
-                              ${isSelected ? 'bg-[#222] border-[#333] text-white font-medium' : 'text-gray-400 hover:bg-[#1e1e1e] hover:text-white'}`}
-                          >
-                            <div className="flex items-center gap-3 min-w-0">
-                              <div className={`w-6 h-6 rounded bg-gradient-to-br ${wsGradient} flex items-center justify-center text-white text-[10px] font-bold shrink-0`}>
-                                {ws.charAt(0).toUpperCase()}
+                      {workspaces.length === 0 ? (
+                        <p className="text-xs text-gray-600 px-3 py-2">No workspaces yet.</p>
+                      ) : (
+                        workspaces.map((ws) => {
+                          const isSelected = ws.id === activeWorkspace?.id;
+                          const wsGradient = getWorkspaceGradient(ws.name);
+                          return (
+                            <div
+                              key={ws.id}
+                              onClick={() => {
+                                setActiveWorkspace(ws);
+                                setDropdownOpen(false);
+                              }}
+                              className={`group flex items-center justify-between px-3 py-2 rounded-lg text-[13px] cursor-pointer transition-all duration-150 border border-transparent
+                                ${isSelected ? 'bg-[#222] border-[#333] text-white font-medium' : 'text-gray-400 hover:bg-[#1e1e1e] hover:text-white'}`}
+                            >
+                              <div className="flex items-center gap-3 min-w-0">
+                                <div className={`w-6 h-6 rounded bg-gradient-to-br ${wsGradient} flex items-center justify-center text-white text-[10px] font-bold shrink-0`}>
+                                  {ws.name.charAt(0).toUpperCase()}
+                                </div>
+                                <span className="truncate">{ws.name}</span>
                               </div>
-                              <span className="truncate">{ws}</span>
+                              <div className="flex items-center gap-1.5 shrink-0">
+                                {isSelected && <Check size={15} className="text-emerald-400" />}
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    deleteWorkspace(ws.id);
+                                  }}
+                                  title="Delete workspace"
+                                  className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-rose-500/20 hover:text-rose-400 text-gray-500 transition-all duration-150 cursor-pointer"
+                                >
+                                  <Trash2 size={13} />
+                                </button>
+                              </div>
                             </div>
-                            {isSelected && <Check size={15} className="text-emerald-400 shrink-0" />}
-                          </div>
-                        );
-                      })}
+                          );
+                        })
+                      )}
                     </div>
                   </div>
 
                   {/* Divider */}
                   <div className="border-t border-[#2a2a2a]" />
 
-                  {/* Footer add button */}
+                  {/* Create Workspace Button */}
                   <button
                     onClick={() => setIsCreating(true)}
                     className="flex items-center justify-center gap-2 py-2.5 text-[13px] font-semibold text-white bg-[#222] hover:bg-[#2a2a2a] rounded-lg border border-[#333] transition-all duration-200 cursor-pointer w-full"
@@ -267,99 +206,9 @@ export default function Navbar() {
             className={`w-full h-8 bg-[#2a2a2a] border border-[#3a3a3a] rounded-md text-[13px] text-gray-300 pl-9 pr-12 select-none focus:outline-none transition-all duration-200
               ${searchFocused ? 'border-[#555] bg-[#333]' : 'hover:border-[#444]'}`}
           />
-          {/* "/" Shortcut Indicator */}
           <kbd className="absolute right-3 px-1.5 py-0.5 rounded border border-[#444] bg-[#333] text-[11px] text-gray-400 font-mono select-none pointer-events-none">
             /
           </kbd>
-        </div>
-      </div>
-
-      {/* ── RIGHT SECTION: ACTIONS & PROFILE ── */}
-      <div className="flex items-center gap-2 shrink-0">
-
-        {/* + CREATE PROJECT Button */}
-        <button
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-white text-black text-[12px] font-semibold rounded-md hover:bg-gray-200 transition-all duration-150 cursor-pointer border-0 tracking-wide"
-        >
-          <Plus size={14} strokeWidth={2.5} />
-          <span>CREATE PROJECT</span>
-        </button>
-
-        {/* User Profile Dropdown */}
-        <div className="relative">
-          <div 
-            onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-            className="flex items-center p-0.5 hover:bg-white/[0.06] rounded-full cursor-pointer transition-all duration-150 group select-none"
-          >
-            {/* User Avatar */}
-            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-600 to-orange-700 flex items-center justify-center text-[10px] font-bold text-white border border-white/10 overflow-hidden">
-              <span>AR</span>
-            </div>
-          </div>
-
-          {profileDropdownOpen && (
-            <>
-              {/* Transparent Backdrop to close on click outside */}
-              <div 
-                className="fixed inset-0 z-40 cursor-default" 
-                onClick={() => setProfileDropdownOpen(false)}
-              />
-              
-              {/* Profile Dropdown Panel */}
-              <div 
-                className="absolute top-full right-0 mt-2 w-64 bg-[#1e1e1e] border border-[#333] rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] p-4 z-50 flex flex-col gap-3.5 text-sm"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {/* User info card */}
-                <div className="flex items-center gap-3 pb-2 border-b border-white/[0.06]">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-600 to-orange-700 flex items-center justify-center text-sm font-bold text-white border border-white/10 shadow-sm shrink-0">
-                    AR
-                  </div>
-                  <div className="flex flex-col min-w-0">
-                    <span className="font-semibold text-white text-xs truncate">Ankit Raj</span>
-                    <span className="text-[10px] text-gray-400 truncate">ankit.raj@example.com</span>
-                  </div>
-                </div>
-
-                {/* Account and preferences menu items */}
-                <div className="flex flex-col gap-0.5">
-                  <div className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg hover:bg-white/[0.04] text-xs text-gray-300 hover:text-white cursor-pointer transition-all duration-150">
-                    <User size={13} className="text-gray-400" />
-                    <span>Profile & Account</span>
-                  </div>
-                  <div className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg hover:bg-white/[0.04] text-xs text-gray-300 hover:text-white cursor-pointer transition-all duration-150">
-                    <Settings size={13} className="text-gray-400" />
-                    <span>Preferences</span>
-                  </div>
-                  <div className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg hover:bg-white/[0.04] text-xs text-gray-300 hover:text-white cursor-pointer transition-all duration-150">
-                    <CreditCard size={13} className="text-gray-400" />
-                    <span>Billing & Plan</span>
-                  </div>
-                </div>
-
-                {/* Divider */}
-                <div className="border-t border-white/[0.06]" />
-
-                {/* Theme switcher */}
-                <div className="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-white/[0.02] border border-white/[0.04] text-xs text-gray-300">
-                  <div className="flex items-center gap-2">
-                    <Laptop size={13} className="text-gray-400" />
-                    <span>Theme</span>
-                  </div>
-                  <span className="text-[10px] text-violet-400 font-semibold bg-violet-500/10 px-2 py-0.5 rounded">Dark Mode</span>
-                </div>
-
-                {/* Divider */}
-                <div className="border-t border-white/[0.06]" />
-
-                {/* Logout */}
-                <div className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg hover:bg-rose-500/10 hover:text-rose-400 text-xs text-gray-400 cursor-pointer transition-all duration-150">
-                  <LogOut size={13} className="text-gray-400 shrink-0" />
-                  <span>Sign Out</span>
-                </div>
-              </div>
-            </>
-          )}
         </div>
       </div>
 

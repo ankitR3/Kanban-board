@@ -19,7 +19,4 @@ export const Category = {
 
 export const SidebarEnum = {
   HOME: 'HOME',
-  PROJECTS: 'PROJECTS',
-  INVITE: 'INVITE',
-  UPGRADE: 'UPGRADE'
 };

@@ -1,19 +1,16 @@
-import { Search, LayoutDashboard } from 'lucide-react';
+import { Search, LayoutDashboard, TrendingUp } from 'lucide-react';
 import { useHomeStore } from '../../store/useHomeStore.js';
 import { SidebarEnum } from '../../constants/enums.js';
 
 export default function MiddleContentbar() {
-  const { activeTab } = useHomeStore();
+  const { activeTab, setActiveTab } = useHomeStore();
 
   const menuItems = [
-    { icon: LayoutDashboard, label: 'Kanban', active: true },
+    { value: SidebarEnum.HOME,     icon: LayoutDashboard, label: 'Kanban' },
+    { value: SidebarEnum.PROGRESS, icon: TrendingUp,      label: 'Progress' }
   ];
 
   const getTitle = () => {
-    if (activeTab === SidebarEnum.HOME)     return 'Home';
-    if (activeTab === SidebarEnum.PROJECTS) return 'Projects';
-    if (activeTab === SidebarEnum.INVITE)   return 'Invite';
-    if (activeTab === SidebarEnum.UPGRADE)  return 'Upgrade';
     return 'Home';
   };
 
@@ -29,16 +26,18 @@ export default function MiddleContentbar() {
       </div>
 
       {/* Nav items */}
-      <nav className="flex flex-col gap-0.5 shrink-0">
+      <nav className="flex flex-col gap-2 shrink-0">
         {menuItems.map((item) => {
           const Icon = item.icon;
+          const isActive = activeTab === item.value;
           return (
             <div
               key={item.label}
+              onClick={() => setActiveTab(item.value)}
               className={`flex items-center gap-3 px-3 py-2 rounded-md cursor-pointer text-sm transition-all
-                ${item.active
-                  ? 'bg-[#2A2A2A] text-white font-medium'
-                  : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                ${isActive
+                  ? 'bg-[#2A2A2A] text-white'
+                  : 'text-gray-400 hover:text-white'
                 }`}
             >
               <Icon size={15} />

@@ -24,6 +24,7 @@ export default async function createTaskController(data) {
                 category: data.category || Category.GENERAL,
                 orderIndex: count,
                 attachments: data.attachments || [],
+                workspaceId: data.workspaceId || null,
             },
         });
 
@@ -31,4 +32,4 @@ export default async function createTaskController(data) {
     } catch (err) {
         throw new Error(`Failed to create task: ${err.message}`);
     }
-}
+}

@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
-import { Flag, Tag, Paperclip, ChevronDown, X, Ban, FileText } from 'lucide-react';
+import { Flag, Tag, Paperclip, ChevronDown, X, Ban, FileText, Download } from 'lucide-react';
 import { Column, Priority, Category } from '../../constants/enums.js';
 import PillDropdown from './PillDropdown.jsx';
+import AttachmentViewer from './AttachmentViewer.jsx';
 
 const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'application/pdf'];
 const MAX_FILE_MB   = 5;
@@ -36,6 +37,8 @@ export default function TaskModal({ isOpen, onClose, onSave, initialTask }) {
   const [category,    setCategory]    = useState(null);
   const [attachments, setAttachments] = useState([]);
   const [fileError,   setFileError]   = useState('');
+  const [titleError,  setTitleError]  = useState('');
+  const [viewerIndex, setViewerIndex] = useState(null);
 
   /* Populate fields when the modal opens or the task changes */
   useEffect(() => {
@@ -56,6 +59,7 @@ export default function TaskModal({ isOpen, onClose, onSave, initialTask }) {
         setAttachments([]);
       }
       setFileError('');
+      setTitleError('');
     }
   }, [isOpen, initialTask]);
 
@@ -97,7 +101,11 @@ export default function TaskModal({ isOpen, onClose, onSave, initialTask }) {
 
   /* ── Save ── */
   const handleSave = () => {
-    if (!title.trim()) return;
+    if (!title.trim()) {
+      setTitleError('Task name is required');
+      return;
+    }
+    setTitleError('');
     onSave({
       title:       title.trim(),
       description,
@@ -146,11 +154,19 @@ export default function TaskModal({ isOpen, onClose, onSave, initialTask }) {
           <input
             data-testid="task-title-input"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) => { setTitle(e.target.value); if (e.target.value.trim()) setTitleError(''); }}
             placeholder="Task Name"
             autoFocus
-            className="w-full bg-transparent text-gray-200 text-xl outline-none placeholder-gray-600 mb-4"
+            className={`w-full bg-transparent text-gray-200 text-xl outline-none placeholder-gray-600 mb-1 ${
+              titleError ? 'placeholder-red-400' : ''
+            }`}
           />
+          {titleError && (
+            <p className="text-red-400 text-xs mb-3 flex items-center gap-1">
+              <span>⚠</span> {titleError}
+            </p>
+          )}
+          {!titleError && <div className="mb-4" />}
 
           {/* Description */}
           <textarea
@@ -244,22 +260,43 @@ export default function TaskModal({ isOpen, onClose, onSave, initialTask }) {
             {/* Attachment list */}
             {attachments.length > 0 ? (
               <div className="space-y-2">
-                {attachments.map((att) => (
-                  <div key={att.id} data-testid="attachment-item" className="flex items-center gap-3 bg-[#262626] border border-[#333] rounded-lg p-2.5">
+                {attachments.map((att, idx) => (
+                  <div
+                    key={att.id}
+                    data-testid="attachment-item"
+                    onClick={() => setViewerIndex(idx)}
+                    className="flex items-center gap-3 bg-[#262626] border border-[#333] hover:border-[#555] rounded-lg p-2.5 cursor-pointer transition-all group"
+                  >
+                    {/* Thumbnail / icon */}
                     {att.type.startsWith('image/') ? (
                       <img src={att.url} alt={att.name} className="w-10 h-10 rounded object-cover shrink-0 border border-[#3a3a3a]" />
                     ) : (
                       <div className="w-10 h-10 rounded bg-[#333] flex items-center justify-center shrink-0">
-                        <FileText size={18} className="text-gray-400" />
+                        <FileText size={18} className="text-red-400" />
                       </div>
                     )}
-                    <span className="text-xs text-gray-300 truncate flex-1">{att.name}</span>
+
+                    {/* Filename */}
+                    <span className="text-xs text-gray-300 group-hover:text-white truncate flex-1 transition-colors">{att.name}</span>
+
+                    {/* Download button */}
+                    <a
+                      href={att.url}
+                      download={att.name}
+                      onClick={(e) => e.stopPropagation()}
+                      title="Download"
+                      className="p-1.5 rounded text-gray-500 hover:text-white hover:bg-white/10 transition-all shrink-0 cursor-pointer"
+                    >
+                      <Download size={13} />
+                    </a>
+
+                    {/* Remove button */}
                     <button
-                      onClick={() => removeAttachment(att.id)}
-                      className="text-gray-600 hover:text-red-400 transition-colors cursor-pointer shrink-0"
+                      onClick={(e) => { e.stopPropagation(); removeAttachment(att.id); }}
+                      className="p-1.5 rounded text-gray-500 hover:text-red-400 hover:bg-red-400/10 transition-all cursor-pointer shrink-0"
                       title="Remove"
                     >
-                      <X size={14} />
+                      <X size={13} />
                     </button>
                   </div>
                 ))}

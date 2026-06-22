@@ -14,6 +14,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Workspace {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String   @unique
+  createdAt DateTime @default(now())
+}
+
 model Task {
   id            String    @id @default(auto()) @map("_id") @db.ObjectId
   title         String
@@ -23,6 +29,7 @@ model Task {
   category      Category  @default(GENERAL)
   orderIndex    Int       @default(0)
   attachments   Attachment[]
+  workspaceId   String?   @db.ObjectId
 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt

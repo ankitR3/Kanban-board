@@ -4,6 +4,9 @@ import moveTaskController from '../controllers/task/moveTask.controller.js';
 import getAllTaskController from '../controllers/task/getAllTask.controller.js';
 import deleteTaskController from '../controllers/task/deleteTask.controller.js';
 import reorderTaskController from '../controllers/task/reorderTask.controller.js';
+import getAllWorkspacesController from '../controllers/workspace/getAllWorkspaces.controller.js';
+import createWorkspaceController from '../controllers/workspace/createWorkspace.controller.js';
+import deleteWorkspaceController from '../controllers/workspace/deleteWorkspace.controller.js';
 
 const safeHandler = (socket, fn) => async (...args) => {
     try {
@@ -19,6 +22,16 @@ const safeHandler = (socket, fn) => async (...args) => {
 export function registerSocketEvents(io) {
     io.on('connection', async (socket) => {
         console.log(`connected: ${socket.id}`);
+
+        // Sync workspaces on connect
+        try {
+            const workspaces = await getAllWorkspacesController();
+            socket.emit('sync:workspaces', workspaces);
+        } catch (err) {
+            socket.emit('error', { message: 'Failed to load workspaces' });
+        }
+
+        // Sync tasks on connect
         try {
             const tasks = await getAllTaskController();
             socket.emit('sync:tasks', tasks);
@@ -27,6 +40,20 @@ export function registerSocketEvents(io) {
                 message: 'Failed to load tasks'
             });
         }
+
+        // ── Workspace events ──────────────────────────────────────────────
+
+        socket.on('workspace:create', safeHandler(socket, async ({ name }) => {
+            const workspace = await createWorkspaceController(name);
+            io.emit('workspace:create', workspace);
+        }));
+
+        socket.on('workspace:delete', safeHandler(socket, async ({ id }) => {
+            await deleteWorkspaceController(id);
+            io.emit('workspace:delete', { id });
+        }));
+
+        // ── Task events ───────────────────────────────────────────────────
 
         socket.on('task:create', safeHandler(socket, async (data) => {
             const task = await createTaskController(data);
