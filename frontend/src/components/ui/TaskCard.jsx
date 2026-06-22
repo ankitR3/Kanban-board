@@ -53,7 +53,7 @@ export default function TaskCard({ task, onEdit, onDelete, onMarkDone, onUpdate 
   return (
     <div
       onClick={() => onEdit(task)}
-      className="bg-[#212121] rounded-md mb-2.5 cursor-pointer transition-all overflow-hidden"
+      className="bg-[#212121] rounded-md mb-2.5 cursor-pointer transition-all relative"
       style={{
         boxShadow: 'inset 0 2px 0 0 rgba(42,42,42,1), inset 0 -1px 0 0 rgba(0,0,0,0.3), 0 1px 0px rgba(0,0,0,0.1)'
       }}
@@ -61,7 +61,7 @@ export default function TaskCard({ task, onEdit, onDelete, onMarkDone, onUpdate 
       {/* ── Image attachment preview (top of card, like ClickUp) ── */}
       {imageAttachments.length > 0 && (
         <div
-          className={`w-full overflow-hidden ${
+          className={`w-full overflow-hidden rounded-t-md ${
             imageAttachments.length === 1 ? '' : 'grid grid-cols-2 gap-0.5'
           }`}
           onClick={(e) => e.stopPropagation()}
