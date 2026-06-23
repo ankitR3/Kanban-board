@@ -25,8 +25,8 @@ model Task {
   title         String
   description   String    @default("")
   column        Column    @default(TODO)
-  priority      Priority  @default(MEDIUM)
-  category      Category  @default(GENERAL)
+  priority      Priority?  @default(MEDIUM)
+  category      Category?  @default(GENERAL)
   orderIndex    Int       @default(0)
   attachments   Attachment[]
   workspaceId   String?   @db.ObjectId
