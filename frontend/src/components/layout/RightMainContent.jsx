@@ -164,7 +164,7 @@ export default function RightMainContent() {
 
                 {/* ── content ── */}
                 <div className="flex-1 p-6 overflow-y-auto kanban-scroll flex flex-col items-center justify-start">
-                    <div className="w-full max-w-2xl">
+                    <div className="w-full max-w-5xl">
                         <ProgressChart tasks={tasks} embedded={false} />
                     </div>
                 </div>
