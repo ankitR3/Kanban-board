@@ -309,15 +309,15 @@ export default function TaskModal({ isOpen, onClose, onSave, initialTask }) {
 
         {/* Footer */}
         <div className="flex items-center justify-end bg-[#111111] px-6 py-4 border-t border-[#2a2a2a] shrink-0">
-          <div className="flex items-center rounded-md overflow-hidden">
+          <div className="flex items-stretch rounded-md overflow-hidden">
             <button
               data-testid="save-task-btn"
               onClick={handleSave}
-              className="text-[14px] font-medium text-gray-900 bg-white hover:bg-gray-200 px-4 py-1.5 hover:cursor-pointer transition-colors"
+              className="flex items-center text-[14px] font-medium text-gray-900 bg-white hover:bg-gray-200 px-4 py-1.5 hover:cursor-pointer transition-colors"
             >
               {isEditing ? 'Save Changes' : 'Create Task'}
             </button>
-            <button className="text-gray-900 bg-white hover:bg-gray-200 px-2 py-2 border-l border-gray-300 hover:cursor-pointer">
+            <button className="flex items-center justify-center text-gray-900 bg-white hover:bg-gray-200 px-2.5 border-l border-gray-300 hover:cursor-pointer">
               <ChevronDown size={16} />
             </button>
           </div>
